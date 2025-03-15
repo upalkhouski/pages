@@ -5,10 +5,16 @@ window.siteSettings = {
   siteDescription: "A collection of notes and articles",
   
   // Tags for categorizing content
-  tags: ["AI", "UX", "Daniel", "Physics"],
+  tags: ["AI", "UX", "Daniel", "Physics", "Math"],
   
   // List of sub-pages
   pages: [
+    {
+      title: "Linear Functions Explorer",
+      url: "pages/linear-functions/",
+      tags: ["Math", "Daniel"],
+      description: "Interactive visualization of linear functions with adjustable parameters"
+    },
     {
       title: "Introduction to AI",
       url: "pages/ai-intro/",
@@ -42,5 +48,5 @@ window.siteSettings = {
   ],
   
   // Optional: Define featured or highlighted content
-  featuredPages: ["pages/ai-intro/", "pages/quantum-physics/"]
+  featuredPages: ["pages/ai-intro/", "pages/quantum-physics/", "pages/linear-functions/"]
 };
