@@ -1,8 +1,8 @@
 // Site structure and navigation settings
 window.siteSettings = {
   // Site metadata
-  siteTitle: "My GitHub Pages",
-  siteDescription: "A collection of notes and articles",
+  siteTitle: "Vladimir's AI Demos",
+  siteDescription: "A collection of Vladimir's AI Demos created in everyday's life and work",
   
   // Tags for categorizing content
   tags: ["AI", "UX", "Daniel", "Physics", "Math"],
