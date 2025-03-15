@@ -185,40 +185,16 @@
             window.siteSettings = {
                 siteTitle: "My GitHub Pages",
                 siteDescription: "A collection of notes and articles",
-                tags: ["AI", "UX", "Daniel", "Physics"],
+                tags: ["DEMO"],
                 pages: [
                     {
                         title: "Introduction to AI",
-                        url: "ai-intro/",
-                        tags: ["AI"],
+                        url: "pages/ai-intro/",
+                        tags: ["DEMO"],
                         description: "An overview of artificial intelligence concepts"
-                    },
-                    {
-                        title: "UX Design Principles",
-                        url: "ux-principles/",
-                        tags: ["UX"],
-                        description: "Key principles for effective user experience design"
-                    },
-                    {
-                        title: "Daniel's Notes on AI",
-                        url: "daniel-ai-notes/",
-                        tags: ["AI", "Daniel"],
-                        description: "Daniel's personal insights on artificial intelligence"
-                    },
-                    {
-                        title: "Quantum Physics Basics",
-                        url: "quantum-physics/",
-                        tags: ["Physics"],
-                        description: "Introduction to fundamental concepts in quantum physics"
-                    },
-                    {
-                        title: "AI in UX Research",
-                        url: "ai-in-ux/",
-                        tags: ["AI", "UX"],
-                        description: "How AI is transforming user experience research"
                     }
                 ],
-                featuredPages: ["ai-intro/", "quantum-physics/"]
+                featuredPages: ["pages/ai-intro/"]
             };
         }
     </script>
@@ -249,18 +225,17 @@
         
         // Card Component
         const Card = ({ page }) => (
-            <div className="card" data-tags={page.tags.map(tag => tag.toLowerCase()).join(' ')}>
-                <h2 className="card-title">{page.title}</h2>
-                <p className="card-description">{page.description}</p>
-                <div className="card-tags">
-                    {page.tags.map((tag, index) => (
-                        <TagLabel key={index} tag={tag} />
-                    ))}
+            <a href={page.url} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="card" data-tags={page.tags.map(tag => tag.toLowerCase()).join(' ')}>
+                    <h2 className="card-title">{page.title}</h2>
+                    <p className="card-description">{page.description}</p>
+                    <div className="card-tags">
+                        {page.tags.map((tag, index) => (
+                            <TagLabel key={index} tag={tag} />
+                        ))}
+                    </div>
                 </div>
-                <div className="card-meta">
-                    <a href={page.url} className="open-button">Open</a>
-                </div>
-            </div>
+            </a>
         );
         
         // Main App Component
