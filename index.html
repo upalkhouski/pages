@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My GitHub Pages</title>
-    <!-- Load React from CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <!-- Load settings -->
+    
+    <!-- Load React from jsDelivr CDN (alternative to unpkg to avoid CORS issues) -->
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.5/babel.min.js"></script>
+    
+    <!-- Load settings.js -->
     <script src="settings.js"></script>
+    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -174,6 +177,52 @@
 <body>
     <div id="root"></div>
     
+    <!-- Fallback settings in case settings.js doesn't load due to CORS -->
+    <script>
+        // Only define if not already defined in settings.js
+        if (typeof window.siteSettings === 'undefined') {
+            console.warn('Using fallback settings. For development only.');
+            window.siteSettings = {
+                siteTitle: "My GitHub Pages",
+                siteDescription: "A collection of notes and articles",
+                tags: ["AI", "UX", "Daniel", "Physics"],
+                pages: [
+                    {
+                        title: "Introduction to AI",
+                        url: "ai-intro/",
+                        tags: ["AI"],
+                        description: "An overview of artificial intelligence concepts"
+                    },
+                    {
+                        title: "UX Design Principles",
+                        url: "ux-principles/",
+                        tags: ["UX"],
+                        description: "Key principles for effective user experience design"
+                    },
+                    {
+                        title: "Daniel's Notes on AI",
+                        url: "daniel-ai-notes/",
+                        tags: ["AI", "Daniel"],
+                        description: "Daniel's personal insights on artificial intelligence"
+                    },
+                    {
+                        title: "Quantum Physics Basics",
+                        url: "quantum-physics/",
+                        tags: ["Physics"],
+                        description: "Introduction to fundamental concepts in quantum physics"
+                    },
+                    {
+                        title: "AI in UX Research",
+                        url: "ai-in-ux/",
+                        tags: ["AI", "UX"],
+                        description: "How AI is transforming user experience research"
+                    }
+                ],
+                featuredPages: ["ai-intro/", "quantum-physics/"]
+            };
+        }
+    </script>
+    
     <script type="text/babel">
         // Logo Component
         const Logo = () => (
@@ -217,39 +266,27 @@
         // Main App Component
         const App = () => {
             const [activeTag, setActiveTag] = React.useState('all');
-            const [pages, setPages] = React.useState([]);
-            const [tags, setTags] = React.useState([]);
-            const [siteInfo, setSiteInfo] = React.useState({
-                title: '',
-                description: ''
-            });
-            
-            React.useEffect(() => {
-                // Access the global siteSettings from settings.js
-                if (window.siteSettings) {
-                    setPages(window.siteSettings.pages || []);
-                    setTags(window.siteSettings.tags || []);
-                    setSiteInfo({
-                        title: window.siteSettings.siteTitle || 'My GitHub Pages',
-                        description: window.siteSettings.siteDescription || 'A collection of notes and articles'
-                    });
-                }
-            }, []);
             
             const handleTagClick = (tag) => {
+                console.log("Tag clicked:", tag);
                 setActiveTag(tag);
             };
             
             const filteredPages = activeTag === 'all' 
-                ? pages 
-                : pages.filter(page => page.tags.map(t => t.toLowerCase()).includes(activeTag.toLowerCase()));
+                ? window.siteSettings.pages 
+                : window.siteSettings.pages.filter(page => 
+                    page.tags.some(t => t.toLowerCase() === activeTag.toLowerCase())
+                  );
+                  
+            console.log("Active tag:", activeTag);
+            console.log("Filtered pages:", filteredPages);
             
             return (
                 <div className="container">
                     <header>
                         <Logo />
-                        <h1>{siteInfo.title}</h1>
-                        <p className="subtitle">{siteInfo.description}</p>
+                        <h1>{window.siteSettings.siteTitle}</h1>
+                        <p className="subtitle">{window.siteSettings.siteDescription}</p>
                     </header>
                     
                     <div className="tag-filter">
@@ -258,7 +295,7 @@
                             isActive={activeTag === 'all'} 
                             onClick={handleTagClick}
                         />
-                        {tags.map((tag, index) => (
+                        {window.siteSettings.tags.map((tag, index) => (
                             <TagButton 
                                 key={index} 
                                 tag={tag} 
@@ -277,9 +314,17 @@
             );
         };
         
-        // Render the App
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // Render the App - wait for both DOM and scripts to be fully loaded
+        window.onload = function() {
+            try {
+                console.log("Rendering app with settings:", window.siteSettings);
+                const root = ReactDOM.createRoot(document.getElementById('root'));
+                root.render(<App />);
+            } catch (error) {
+                console.error("Error rendering app:", error);
+                document.getElementById('root').innerHTML = '<div style="color: red; padding: 20px;">Error loading the application. Please check the console for details.</div>';
+            }
+        };
     </script>
 </body>
 </html>

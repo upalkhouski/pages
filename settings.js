@@ -1,5 +1,5 @@
 // Site structure and navigation settings
-const siteSettings = {
+window.siteSettings = {
   // Site metadata
   siteTitle: "My GitHub Pages",
   siteDescription: "A collection of notes and articles",
