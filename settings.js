@@ -20,9 +20,15 @@ window.siteSettings = {
       url: "pages/ai-intro/",
       tags: ["AI"],
       description: "An overview of artificial intelligence concepts"
+    },
+    {
+      title: "IT Schulpraktikum in Frankfurt",
+      url: "pages/schulpraktikum-guide/",
+      tags: ["School"],
+      description: "Guide for 9-10th grade students seeking IT internships in Frankfurt"
     }
   ],
   
   // Optional: Define featured or highlighted content
-  featuredPages: ["pages/ai-intro/", "pages/quantum-physics/", "pages/linear-functions/"]
+  featuredPages: ["pages/ai-intro/", "pages/linear-functions/"]
 };

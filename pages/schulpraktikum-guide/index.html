@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Schulpraktikum in Frankfurt (9-10. Klasse)</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+        }
+        
+        .page-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .page-container {
+                grid-template-columns: 7fr 3fr;
+            }
+        }
+        
+        .main-content {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+        
+        .sidebar {
+            background-color: #f7f9fc;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            align-self: start;
+        }
+        
+        .company-card {
+            background-color: #fff;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        
+        .company-card h3 {
+            margin-top: 0;
+            color: #2980b9;
+        }
+        
+        .step-card {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2ecc71;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+        }
+        
+        .step-card h4 {
+            margin-top: 0;
+            color: #27ae60;
+        }
+        
+        .contact-info {
+            font-style: italic;
+            margin-top: 5px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        .tips-box {
+            background-color: #edf7ff;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .timeline {
+            list-style-type: none;
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline:before {
+            content: ' ';
+            background: #d4d9df;
+            display: inline-block;
+            position: absolute;
+            left: 9px;
+            width: 2px;
+            height: 100%;
+        }
+        
+        .timeline li {
+            margin: 20px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .timeline li:before {
+            content: ' ';
+            background: #3498db;
+            display: inline-block;
+            position: absolute;
+            border-radius: 50%;
+            left: -22px;
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>IT Schulpraktikum in Frankfurt für 9-10. Klasse</h1>
+        <p>Ein umfassender Leitfaden für Schülerinnen und Schüler, die ein Praktikum in Software-Engineering und IT-Beratungsunternehmen in Frankfurt suchen</p>
+    </header>
+
+    <div class="page-container">
+        <main class="main-content">
+            <section id="intro">
+                <h2>Einführung</h2>
+                <p>Ein Schulpraktikum in der IT-Branche ist eine hervorragende Möglichkeit, erste Einblicke in die Welt der Softwareentwicklung und digitalen Beratung zu bekommen. Für Schülerinnen und Schüler der 9. und 10. Klasse bieten verschiedene Unternehmen in Frankfurt spezielle Programme an, die einen Einblick in diesen spannenden Berufsbereich ermöglichen.</p>
+                <p>Dieser Leitfaden hilft dir dabei, die richtigen Unternehmen zu finden, dich erfolgreich zu bewerben und das Beste aus deinem Praktikum herauszuholen.</p>
+            </section>
+
+            <section id="companies">
+                <h2>Unternehmen mit Schulpraktika für 9-10. Klasse</h2>
+                
+                <div class="company-card">
+                    <h3>1. codecentric AG</h3>
+                    <p><strong>Programm-Details:</strong></p>
+                    <ul>
+                        <li><strong>Bestätigt für 9. Klasse:</strong> Ja, sie haben bereits Praktikanten aus der 9. Klasse aufgenommen</li>
+                        <li><strong>Dauer:</strong> Zwei Wochen (Standard-Schulpraktikumszeitraum)</li>
+                        <li><strong>Standort:</strong> Büro in Frankfurt</li>
+                        <li><strong>Schwerpunkte:</strong> Webentwicklung, agile Methoden, Grundlagen der Softwareentwicklung</li>
+                    </ul>
+                    <p><strong>Was dich erwartet:</strong></p>
+                    <ul>
+                        <li>Erlernen grundlegender Programmierkonzepte</li>
+                        <li>Einführung in Webtechnologien</li>
+                        <li>Begleitung erfahrener Entwickler</li>
+                        <li>Arbeit an kleinen Programmieraufgaben</li>
+                    </ul>
+                    <p class="contact-info">Kontakt: info@codecentric.de | +49 69 153 22 94 0</p>
+                </div>
+                
+                <div class="company-card">
+                    <h3>2. Deloitte</h3>
+                    <p><strong>Programm-Details:</strong></p>
+                    <ul>
+                        <li><strong>Geeignet für:</strong> Schüler während der Pflichtpraktikumsphase (typischerweise 9./10. Klasse)</li>
+                        <li><strong>Dauer:</strong> Mindestens 2 Wochen während der schulischen Orientierungsphase oder Schulferien</li>
+                        <li><strong>Verfügbare Abteilungen:</strong> Wirtschaftsprüfung, Steuerberatung, Consulting, Financial Advisory und Risk Advisory</li>
+                    </ul>
+                    <p><strong>Was dich erwartet:</strong></p>
+                    <ul>
+                        <li>Begleitung von Fachleuten</li>
+                        <li>Kennenlernen von Geschäftsprozessen</li>
+                        <li>Einführung in digitale Tools</li>
+                        <li>Teilnahme an Team-Meetings</li>
+                    </ul>
+                    <p class="contact-info">Kontakt: karriere@deloitte.de | +49 69 75695 01</p>
+                </div>
+                
+                <div class="company-card">
+                    <h3>3. Accenture</h3>
+                    <p><strong>Programm-Details:</strong></p>
+                    <ul>
+                        <li><strong>Optionen:</strong> Persönliches und virtuelles Schulpraktikum verfügbar</li>
+                        <li><strong>Virtuelles Programm:</strong> Verfügbar für Schüler, die nicht persönlich teilnehmen können</li>
+                        <li><strong>Dauer:</strong> Zwei Wochen</li>
+                        <li><strong>Schwerpunkt:</strong> Technologieberatung, digitale Lösungen</li>
+                    </ul>
+                    <p><strong>Programm-Highlights:</strong></p>
+                    <ul>
+                        <li>Einblicke in die IT-Beratung</li>
+                        <li>Einführung in digitale Technologien</li>
+                        <li>Geführte Lernpfade</li>
+                        <li>Mentoring-Möglichkeiten</li>
+                    </ul>
+                    <p class="contact-info">Kontakt: karriere@accenture.com | +49 6173 94 99</p>
+                </div>
+                
+                <div class="company-card">
+                    <h3>4. DB Systel GmbH (IT-Abteilung der Deutschen Bahn)</h3>
+                    <p><strong>Programm-Details:</strong></p>
+                    <ul>
+                        <li><strong>Geeignet für:</strong> Schüler der 9. und 10. Klasse</li>
+                        <li><strong>Dauer:</strong> 2-3 Wochen</li>
+                        <li><strong>Schwerpunkte:</strong> IT-Infrastruktur, Softwareentwicklung, digitale Bahntechnologien</li>
+                        <li><strong>Standort:</strong> Frankfurt Hauptsitz</li>
+                    </ul>
+                    <p><strong>Was dich erwartet:</strong></p>
+                    <ul>
+                        <li>Einführung in Bahn-IT-Systeme</li>
+                        <li>Grundlegende Programmierübungen</li>
+                        <li>Begleitung von IT-Fachleuten</li>
+                        <li>Teamprojekterfahrung</li>
+                    </ul>
+                    <p class="contact-info">Kontakt: schulpraktikum@deutschebahn.com</p>
+                </div>
+                
+                <div class="company-card">
+                    <h3>5. Provadis (IT-Abteilung)</h3>
+                    <p><strong>Programm-Details:</strong></p>
+                    <ul>
+                        <li><strong>Bestätigt für:</strong> Schüler der 9. und 10. Klasse</li>
+                        <li><strong>Dauer:</strong> 2 Wochen</li>
+                        <li><strong>Schwerpunkt:</strong> IT-Systeme, digitale Lösungen, industrielle IT</li>
+                        <li><strong>Bewerbungen:</strong> Ganzjährig je nach Verfügbarkeit</li>
+                    </ul>
+                    <p><strong>Was dich erwartet:</strong></p>
+                    <ul>
+                        <li>Einblicke in IT-Infrastruktur</li>
+                        <li>Grundlagen der Programmierung</li>
+                        <li>Unterstützung bei Geschäftsanwendungen</li>
+                        <li>Teamarbeit</li>
+                    </ul>
+                    <p class="contact-info">Kontakt: ausbildung@provadis.de | +49 69 305 43833</p>
+                </div>
+                
+                <div class="company-card">
+                    <h3>6. Stadt Frankfurt - IT-Abteilung</h3>
+                    <p><strong>Programm-Details:</strong></p>
+                    <ul>
+                        <li><strong>Klassenstufe:</strong> Offen für Schüler der 9. und 10. Klasse</li>
+                        <li><strong>Dauer:</strong> 2-3 Wochen</li>
+                        <li><strong>Schwerpunkte:</strong> Kommunale IT-Systeme, Softwareanwendungen</li>
+                    </ul>
+                    <p><strong>Was dich erwartet:</strong></p>
+                    <ul>
+                        <li>Einführung in öffentliche Dienst-IT</li>
+                        <li>Datenbank-Grundlagen</li>
+                        <li>Unterstützung bei Softwareanwendungen</li>
+                        <li>Digitale Bürgerdienste</li>
+                    </ul>
+                    <p class="contact-info">Bewerbung über das Stadt Frankfurt Karriereportal</p>
+                </div>
+            </section>
+
+            <section id="application-process">
+                <h2>Bewerbungsprozess: Schritt für Schritt</h2>
+                
+                <div class="tips-box">
+                    <h3>Wichtiger Hinweis zur Zeitplanung</h3>
+                    <p>Beginne mit der Suche nach einem Praktikumsplatz frühzeitig - idealerweise 6 Monate vor dem gewünschten Praktikumszeitraum. Viele begehrte Plätze sind schnell vergeben!</p>
+                </div>
+                
+                <h3>Phase 1: Vorbereitung (3-4 Monate vor dem Praktikum)</h3>
+                
+                <div class="step-card">
+                    <h4>Schritt 1: Schulanforderungen verstehen</h4>
+                    <ul>
+                        <li>Terminiere ein Gespräch mit deinem Berufsberater oder Lehrer</li>
+                        <li>Kläre den genauen Zeitraum des offiziellen Schulpraktikums</li>
+                        <li>Besorge dir das offizielle Schulpraktikumsbestätigungsschreiben</li>
+                    </ul>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Schritt 2: Selbsteinschätzung</h4>
+                    <ul>
+                        <li>Identifiziere deine IT-Interessen (z.B. Softwareentwicklung, Webdesign)</li>
+                        <li>Liste deine relevanten Fähigkeiten auf (auch grundlegende zählen)</li>
+                        <li>Setze realistische Erwartungen für ein Praktikum in der 9./10. Klasse</li>
+                    </ul>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Schritt 3: Unternehmen recherchieren</h4>
+                    <ul>
+                        <li>Erstelle eine Liste von Zielunternehmen aus unserer verifizierten Liste</li>
+                        <li>Besuche die Unternehmenswebsites</li>
+                        <li>Prüfe Bewerbungsfristen (viele erfordern 3-6 Monate Vorlaufzeit)</li>
+                    </ul>
+                </div>
+                
+                <h3>Phase 2: Bewerbungsvorbereitung (2-3 Monate vor dem Praktikum)</h3>
+                
+                <div class="step-card">
+                    <h4>Schritt 4: Dokumente vorbereiten</h4>
+                    <ul>
+                        <li>Erstelle einen einfachen Lebenslauf (maximal 1 Seite)</li>
+                        <li>Verfasse ein Motivationsschreiben</li>
+                        <li>Organisiere zusätzliche Dokumente (Schulbestätigung, Zeugnisse)</li>
+                    </ul>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Schritt 5: Bewerbungen anpassen</h4>
+                    <p>Passe deine Bewerbung für jedes Unternehmen individuell an, betone relevante Interessen und Fähigkeiten.</p>
+                </div>
+                
+                <h3>Phase 3: Bewerbungsphase (2-3 Monate vor dem Praktikum)</h3>
+                
+                <div class="step-card">
+                    <h4>Schritt 6: Bewerbungen einreichen</h4>
+                    <ul>
+                        <li>Prüfe die bevorzugten Einreichungswege jedes Unternehmens</li>
+                        <li>Erstelle eine Tracking-Tabelle mit allen wichtigen Informationen</li>
+                        <li>Reiche Bewerbungen rechtzeitig vor den Fristen ein</li>
+                    </ul>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Schritt 7: Nachfassen</h4>
+                    <ul>
+                        <li>Warte eine Woche nach Einreichung, bevor du nachfragst</li>
+                        <li>Bereite eine höfliche Nachfrage-E-Mail vor</li>
+                        <li>Sei beharrlich, aber professionell</li>
+                    </ul>
+                </div>
+                
+                <h3>Phase 4: Vorstellungsgespräch (1-2 Monate vor dem Praktikum)</h3>
+                
+                <div class="step-card">
+                    <h4>Schritt 8: Vorbereitung auf Gespräche</h4>
+                    <ul>
+                        <li>Recherchiere häufige Fragen für Schulpraktikumsgespräche</li>
+                        <li>Übe Antworten mit Eltern oder Freunden</li>
+                        <li>Bereite eigene Fragen für den Interviewer vor</li>
+                    </ul>
+                </div>
+                
+                <div class="step-card">
+                    <h4>Schritt 9-10: Gesprächstag und Nachbereitung</h4>
+                    <ul>
+                        <li>Erscheine 10-15 Minuten früher</li>
+                        <li>Zeige Begeisterung und echtes Interesse</li>
+                        <li>Sende innerhalb von 24 Stunden eine Dankes-E-Mail</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section id="tips">
+                <h2>Tipps für ein erfolgreiches Praktikum</h2>
+                <div class="tips-box">
+                    <h3>Vor dem Praktikum</h3>
+                    <ul>
+                        <li>Informiere dich über das Unternehmen und seine Technologien</li>
+                        <li>Lerne grundlegende Programmierkonzepte kennen (falls möglich)</li>
+                        <li>Setze dir persönliche Lernziele</li>
+                        <li>Plane deinen Weg zum Büro, um pünktlich anzukommen</li>
+                    </ul>
+                </div>
+                
+                <div class="tips-box">
+                    <h3>Während des Praktikums</h3>
+                    <ul>
+                        <li>Sei proaktiv und frage nach Aufgaben</li>
+                        <li>Mache dir Notizen während des gesamten Praktikums</li>
+                        <li>Stelle Fragen, wenn du etwas nicht verstehst</li>
+                        <li>Networke mit Fachleuten</li>
+                        <li>Sammle Material für deinen Schulbericht/Präsentation</li>
+                    </ul>
+                </div>
+                
+                <div class="tips-box">
+                    <h3>Nach dem Praktikum</h3>
+                    <ul>
+                        <li>Bitte um ein Referenzschreiben oder eine Praktikumsbescheinigung</li>
+                        <li>Danke deinen Betreuern und Kollegen</li>
+                        <li>Vervollständige alle erforderlichen Schuldokumente</li>
+                        <li>Aktualisiere deinen Lebenslauf mit der neuen Erfahrung</li>
+                        <li>Halte den Kontakt zu hilfreichen Fachleuten (mit Erlaubnis des Betreuers)</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+        
+        <aside class="sidebar">
+            <h3>Bewerbungs-Timeline</h3>
+            <ul class="timeline">
+                <li><strong>6 Monate vorher:</strong> Recherche zu Unternehmen beginnen</li>
+                <li><strong>5 Monate vorher:</strong> Lebenslauf und Anschreiben vorbereiten</li>
+                <li><strong>4 Monate vorher:</strong> Bewerbungen einreichen</li>
+                <li><strong>3 Monate vorher:</strong> Nachfassen und auf Antworten warten</li>
+                <li><strong>2 Monate vorher:</strong> Vorstellungsgespräche führen</li>
+                <li><strong>1 Monat vorher:</strong> Praktikum bestätigen und Details klären</li>
+                <li><strong>1-2 Wochen vorher:</strong> Letzte Vorbereitungen treffen</li>
+            </ul>
+            
+            <div class="tips-box">
+                <h3>Nützliche Bewerbungstipps</h3>
+                <ol>
+                    <li>Beginne früh - die besten Positionen sind schnell vergeben</li>
+                    <li>Sei beharrlich - lass dich nicht von Absagen entmutigen</li>
+                    <li>Zeige Begeisterung - demonstriere echtes Interesse am Lernen</li>
+                    <li>Sei professionell - behandle dies als echte Berufschance</li>
+                    <li>Führe ein Tagebuch - halte fest, was du lernst</li>
+                </ol>
+            </div>
+            
+            <div class="contact-box">
+                <h3>Wichtige Kontakte</h3>
+                <p><strong>codecentric AG:</strong><br>
+                info@codecentric.de<br>
+                +49 69 153 22 94 0</p>
+                
+                <p><strong>Deloitte Frankfurt:</strong><br>
+                karriere@deloitte.de<br>
+                +49 69 75695 01</p>
+                
+                <p><strong>Accenture:</strong><br>
+                karriere@accenture.com<br>
+                +49 6173 94 99</p>
+                
+                <p><strong>DB Systel:</strong><br>
+                schulpraktikum@deutschebahn.com</p>
+                
+                <p><strong>Provadis:</strong><br>
+                ausbildung@provadis.de<br>
+                +49 69 305 43833</p>
+            </div>
+            
+            <div class="resources-box">
+                <h3>Nützliche Websites</h3>
+                <ul>
+                    <li><a href="https://www.xn--schlerpraktikum-1vb.de" target="_blank">Schülerpraktikum.de</a> - Datenbank mit Praktikumsmöglichkeiten</li>
+                    <li><a href="https://www.aubi-plus.de/schuelerpraktikum/" target="_blank">AUBI-plus</a> - Schulpraktikumsangebote</li>
+                    <li><a href="https://www.praktikumsstellen.de" target="_blank">Praktikumsstellen.de</a> - Umfassende Praktikumsdatenbank</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+    
+    <footer>
+        <p>© 2025 - IT Schulpraktikum Guide - Letzte Aktualisierung: März 2025</p>
+    </footer>
+</body>
+</html>
