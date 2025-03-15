@@ -20,30 +20,6 @@ window.siteSettings = {
       url: "pages/ai-intro/",
       tags: ["AI"],
       description: "An overview of artificial intelligence concepts"
-    },
-    {
-      title: "UX Design Principles",
-      url: "pages/ux-principles/",
-      tags: ["UX"],
-      description: "Key principles for effective user experience design"
-    },
-    {
-      title: "Daniel's Notes on AI",
-      url: "pages/daniel-ai-notes/",
-      tags: ["AI", "Daniel"],
-      description: "Daniel's personal insights on artificial intelligence"
-    },
-    {
-      title: "Quantum Physics Basics",
-      url: "pages/quantum-physics/",
-      tags: ["Physics"],
-      description: "Introduction to fundamental concepts in quantum physics"
-    },
-    {
-      title: "AI in UX Research",
-      url: "pages/ai-in-ux/",
-      tags: ["AI", "UX"],
-      description: "How AI is transforming user experience research"
     }
   ],
   
