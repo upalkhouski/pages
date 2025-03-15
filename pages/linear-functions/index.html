@@ -3,357 +3,453 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linear Functions Visualization</title>
-    <!-- Load React and ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-    <!-- Load Babel for JSX support -->
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <!-- Use d3 instead of Recharts for more reliable visualization -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <title>Simple Linear Functions</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 1000px;
+            max-width: 800px;
             margin: 0 auto;
             padding: 20px;
         }
-        .container {
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .canvas-container {
+            position: relative;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            width: 500px;
+            height: 500px;
+        }
+        canvas {
+            display: block;
+        }
+        .controls {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-        .control-panel {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin: 20px 0;
             padding: 15px;
             background-color: #f5f5f5;
             border-radius: 8px;
         }
-        .function-input {
+        .function-control {
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .chart-container {
-            height: 400px;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        input[type="number"] {
-            width: 60px;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            gap: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         label {
             font-weight: bold;
+            min-width: 80px;
         }
-        .formula {
-            font-style: italic;
-            margin-left: 10px;
+        input[type="range"] {
+            flex: 1;
         }
-        .function-card {
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
+        input[type="number"] {
+            width: 60px;
+            padding: 5px;
+        }
+        .value-display {
+            min-width: 40px;
+            text-align: center;
         }
         button {
-            padding: 8px 12px;
+            padding: 8px 16px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            align-self: flex-start;
         }
         button:hover {
             background-color: #45a049;
         }
-        .svg-container {
-            width: 100%;
-            height: 100%;
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
         }
-        .axis line, .axis path {
-            stroke: #000;
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
         }
-        .grid line {
-            stroke: lightgrey;
-            stroke-opacity: 0.7;
-            shape-rendering: crispEdges;
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .points-input {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .result-box {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+    <h1>Linear Functions Visualization</h1>
+    
+    <div class="tabs">
+        <div class="tab active" data-tab="slider-tab">Slope-Intercept Form</div>
+        <div class="tab" data-tab="points-tab">From Two Points</div>
+    </div>
+    
+    <div id="slider-tab" class="tab-content active">
+        <div class="controls">
+            <div class="function-control">
+                <label for="function1-slope">y = mx + b</label>
+                <label for="function1-slope">Slope (m):</label>
+                <input type="range" id="function1-slope" min="-5" max="5" value="1" step="0.5">
+                <span class="value-display" id="function1-slope-value">1</span>
+                
+                <label for="function1-intercept">Y-intercept (b):</label>
+                <input type="range" id="function1-intercept" min="-10" max="10" value="0" step="1">
+                <span class="value-display" id="function1-intercept-value">0</span>
+            </div>
+            
+            <div class="function-control">
+                <label for="function2-slope">y = mx + b</label>
+                <label for="function2-slope">Slope (m):</label>
+                <input type="range" id="function2-slope" min="-5" max="5" value="-1" step="0.5">
+                <span class="value-display" id="function2-slope-value">-1</span>
+                
+                <label for="function2-intercept">Y-intercept (b):</label>
+                <input type="range" id="function2-intercept" min="-10" max="10" value="2" step="1">
+                <span class="value-display" id="function2-intercept-value">2</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="points-tab" class="tab-content">
+        <div class="controls">
+            <h3>Calculate Linear Function from Two Points</h3>
+            <div class="points-input">
+                <label for="point1-x">Point 1:</label>
+                <div>x: <input type="number" id="point1-x" value="1" step="1"></div>
+                <div>y: <input type="number" id="point1-y" value="2" step="1"></div>
+                
+                <label for="point2-x">Point 2:</label>
+                <div>x: <input type="number" id="point2-x" value="3" step="1"></div>
+                <div>y: <input type="number" id="point2-y" value="6" step="1"></div>
+            </div>
+            
+            <button id="calculate-btn">Calculate Function</button>
+            
+            <div id="result" class="result-box">
+                Function: y = 2x + 0
+            </div>
+            
+            <div class="function-control" style="margin-top: 20px;">
+                <label>Function Color:</label>
+                <select id="function3-color">
+                    <option value="#4CAF50">Green</option>
+                    <option value="#9C27B0">Purple</option>
+                    <option value="#FF9800">Orange</option>
+                    <option value="#2196F3">Blue</option>
+                </select>
+                <button id="add-to-graph-btn">Add to Graph</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="canvas-container">
+        <canvas id="graph" width="500" height="500"></canvas>
+    </div>
+    
+    <div>
+        <h2>About Linear Functions</h2>
+        <p>A linear function is expressed as f(x) = mx + b, where:</p>
+        <ul>
+            <li><strong>m</strong> is the slope (steepness of the line)</li>
+            <li><strong>b</strong> is the y-intercept (where the line crosses the y-axis)</li>
+        </ul>
+        <p>You can define a linear function in two ways:</p>
+        <ul>
+            <li><strong>Slope-Intercept Form:</strong> By directly specifying the slope (m) and y-intercept (b)</li>
+            <li><strong>Using Two Points:</strong> Given two distinct points (x₁,y₁) and (x₂,y₂), the slope is calculated as m = (y₂-y₁)/(x₂-x₁), and the y-intercept is found by substituting back into y = mx + b</li>
+        </ul>
+        <p>When you adjust the parameters, you can observe how changes affect the graph:</p>
+        <ul>
+            <li>When m > 0, the line slopes upward</li>
+            <li>When m < 0, the line slopes downward</li>
+            <li>When m = 0, the line is horizontal</li>
+            <li>The larger |m|, the steeper the line</li>
+        </ul>
+    </div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
-
-        // Main application component
-        const LinearFunctionsApp = () => {
-            // State for the linear functions
-            const [functions, setFunctions] = useState([
-                { id: 1, slope: 2, intercept: 0, color: '#8884d8', visible: true },
-                { id: 2, slope: -1, intercept: 5, color: '#82ca9d', visible: true },
-                { id: 3, slope: 0.5, intercept: -3, color: '#ffc658', visible: true }
-            ]);
+    <script>
+        // Get the canvas and context
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d');
+        
+        // Function parameters
+        let function1 = { slope: 1, intercept: 0, color: '#4285F4' };
+        let function2 = { slope: -1, intercept: 2, color: '#DB4437' };
+        let functions = [function1, function2];
+        
+        // Constants for the coordinate system
+        const GRID_SIZE = 20; // Pixels per unit
+        const ORIGIN_X = canvas.width / 2;
+        const ORIGIN_Y = canvas.height / 2;
+        
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and its content
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Draw the coordinate system
+        function drawCoordinateSystem() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // State for the x-axis range
-            const [range, setRange] = useState({ min: -10, max: 10 });
+            // Set up styles for the grid
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
             
-            // Reference to chart container
-            const chartRef = useRef(null);
+            // Draw the grid
+            // Vertical lines
+            for (let x = ORIGIN_X % GRID_SIZE; x < canvas.width; x += GRID_SIZE) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
             
-            // Handler for changing function parameters
-            const handleFunctionChange = (id, field, value) => {
-                setFunctions(functions.map(f => 
-                    f.id === id ? { ...f, [field]: parseFloat(value) } : f
-                ));
+            // Horizontal lines
+            for (let y = ORIGIN_Y % GRID_SIZE; y < canvas.height; y += GRID_SIZE) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Draw the axes
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(0, ORIGIN_Y);
+            ctx.lineTo(canvas.width, ORIGIN_Y);
+            ctx.stroke();
+            
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(ORIGIN_X, 0);
+            ctx.lineTo(ORIGIN_X, canvas.height);
+            ctx.stroke();
+            
+            // Draw axis labels
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            // X-axis labels
+            for (let x = Math.floor(-ORIGIN_X / GRID_SIZE); x <= Math.floor((canvas.width - ORIGIN_X) / GRID_SIZE); x++) {
+                if (x === 0) continue; // Skip origin
+                const xPos = ORIGIN_X + x * GRID_SIZE;
+                ctx.fillText(x.toString(), xPos, ORIGIN_Y + 20);
+            }
+            
+            // Y-axis labels
+            for (let y = Math.floor(-ORIGIN_Y / GRID_SIZE); y <= Math.floor((canvas.height - ORIGIN_Y) / GRID_SIZE); y++) {
+                if (y === 0) continue; // Skip origin
+                const yPos = ORIGIN_Y - y * GRID_SIZE;
+                ctx.fillText(y.toString(), ORIGIN_X - 20, yPos);
+            }
+            
+            // Origin label
+            ctx.fillText('0', ORIGIN_X - 10, ORIGIN_Y + 20);
+        }
+        
+        // Convert from Cartesian to Canvas coordinates
+        function toCanvasX(x) {
+            return ORIGIN_X + x * GRID_SIZE;
+        }
+        
+        function toCanvasY(y) {
+            return ORIGIN_Y - y * GRID_SIZE;
+        }
+        
+        // Draw a linear function
+        function drawFunction(slope, intercept, color) {
+            // Calculate the start and end points of the line
+            const xMin = -Math.floor(ORIGIN_X / GRID_SIZE);
+            const xMax = Math.floor((canvas.width - ORIGIN_X) / GRID_SIZE);
+            
+            const yMin = slope * xMin + intercept;
+            const yMax = slope * xMax + intercept;
+            
+            // Draw the line
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(toCanvasX(xMin), toCanvasY(yMin));
+            ctx.lineTo(toCanvasX(xMax), toCanvasY(yMax));
+            ctx.stroke();
+            
+            // Add a label near the center of the line
+            const xMid = 0;
+            const yMid = slope * xMid + intercept;
+            
+            ctx.fillStyle = color;
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'bottom';
+            
+            const labelX = toCanvasX(xMid + 0.5);
+            const labelY = toCanvasY(yMid + 0.5);
+            
+            ctx.fillText(`y = ${slope}x ${intercept >= 0 ? '+ ' + intercept : '- ' + Math.abs(intercept)}`, labelX, labelY);
+        }
+        
+        // Draw all functions
+        function draw() {
+            drawCoordinateSystem();
+            functions.forEach(func => {
+                drawFunction(func.slope, func.intercept, func.color);
+            });
+        }
+        
+        // Calculate linear function from two points
+        function calculateLinearFunction(x1, y1, x2, y2) {
+            // Check if points are distinct
+            if (x1 === x2) {
+                return { error: "Cannot calculate slope for vertical line (x1 = x2)" };
+            }
+            
+            // Calculate slope
+            const slope = (y2 - y1) / (x2 - x1);
+            
+            // Calculate y-intercept using point-slope form
+            const intercept = y1 - slope * x1;
+            
+            return {
+                slope: parseFloat(slope.toFixed(2)),
+                intercept: parseFloat(intercept.toFixed(2))
             };
+        }
+        
+        // Format the function as a string
+        function formatFunction(slope, intercept) {
+            return `y = ${slope}x ${intercept >= 0 ? '+ ' + intercept : '- ' + Math.abs(intercept)}`;
+        }
+        
+        // Initialize the drawing
+        draw();
+        
+        // Set up event listeners for the sliders
+        document.getElementById('function1-slope').addEventListener('input', function() {
+            function1.slope = parseFloat(this.value);
+            document.getElementById('function1-slope-value').textContent = function1.slope;
+            draw();
+        });
+        
+        document.getElementById('function1-intercept').addEventListener('input', function() {
+            function1.intercept = parseInt(this.value);
+            document.getElementById('function1-intercept-value').textContent = function1.intercept;
+            draw();
+        });
+        
+        document.getElementById('function2-slope').addEventListener('input', function() {
+            function2.slope = parseFloat(this.value);
+            document.getElementById('function2-slope-value').textContent = function2.slope;
+            draw();
+        });
+        
+        document.getElementById('function2-intercept').addEventListener('input', function() {
+            function2.intercept = parseInt(this.value);
+            document.getElementById('function2-intercept-value').textContent = function2.intercept;
+            draw();
+        });
+        
+        // Set up event listeners for the point-based function calculator
+        document.getElementById('calculate-btn').addEventListener('click', function() {
+            const x1 = parseFloat(document.getElementById('point1-x').value);
+            const y1 = parseFloat(document.getElementById('point1-y').value);
+            const x2 = parseFloat(document.getElementById('point2-x').value);
+            const y2 = parseFloat(document.getElementById('point2-y').value);
             
-            // Handler for toggling function visibility
-            const toggleFunctionVisibility = (id) => {
-                setFunctions(functions.map(f => 
-                    f.id === id ? { ...f, visible: !f.visible } : f
-                ));
-            };
+            const result = calculateLinearFunction(x1, y1, x2, y2);
             
-            // Handler for changing the x-axis range
-            const handleRangeChange = (field, value) => {
-                setRange({ ...range, [field]: parseInt(value) });
-            };
+            if (result.error) {
+                document.getElementById('result').textContent = result.error;
+            } else {
+                document.getElementById('result').textContent = 
+                    `Function: ${formatFunction(result.slope, result.intercept)}`;
+                
+                // Store the calculated values for adding to graph
+                document.getElementById('result').dataset.slope = result.slope;
+                document.getElementById('result').dataset.intercept = result.intercept;
+            }
+        });
+        
+        // Set up event listener for adding function to graph
+        document.getElementById('add-to-graph-btn').addEventListener('click', function() {
+            const slope = parseFloat(document.getElementById('result').dataset.slope);
+            const intercept = parseFloat(document.getElementById('result').dataset.intercept);
+            const color = document.getElementById('function3-color').value;
             
-            // Handler for adding a new function
-            const addNewFunction = () => {
-                const newId = Math.max(...functions.map(f => f.id), 0) + 1;
-                const colors = ['#ff7300', '#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                
-                setFunctions([
-                    ...functions, 
-                    { id: newId, slope: 1, intercept: 0, color: randomColor, visible: true }
-                ]);
-            };
-            
-            // Handler for removing a function
-            const removeFunction = (id) => {
-                if (functions.length > 1) {
-                    setFunctions(functions.filter(f => f.id !== id));
-                }
-            };
-
-            // Draw the chart using D3
-            useEffect(() => {
-                if (!chartRef.current) return;
-                
-                // Clear previous chart
-                d3.select(chartRef.current).selectAll("*").remove();
-                
-                // Set up dimensions
-                const margin = { top: 20, right: 30, bottom: 40, left: 50 };
-                const width = chartRef.current.clientWidth - margin.left - margin.right;
-                const height = chartRef.current.clientHeight - margin.top - margin.bottom;
-                
-                // Create SVG
-                const svg = d3.select(chartRef.current)
-                    .append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform", `translate(${margin.left},${margin.top})`);
-                
-                // Create scales
-                const x = d3.scaleLinear()
-                    .domain([range.min, range.max])
-                    .range([0, width]);
-                
-                // Calculate y domain based on functions
-                let yMin = Infinity;
-                let yMax = -Infinity;
-                
-                functions.forEach(func => {
-                    if (func.visible) {
-                        const y1 = func.slope * range.min + func.intercept;
-                        const y2 = func.slope * range.max + func.intercept;
-                        yMin = Math.min(yMin, y1, y2);
-                        yMax = Math.max(yMax, y1, y2);
-                    }
+            if (!isNaN(slope) && !isNaN(intercept)) {
+                // Add the new function to the array
+                functions.push({
+                    slope: slope,
+                    intercept: intercept,
+                    color: color
                 });
                 
-                // Add padding to y domain
-                const yPadding = (yMax - yMin) * 0.1;
-                yMin = yMin - yPadding;
-                yMax = yMax + yPadding;
-                
-                const y = d3.scaleLinear()
-                    .domain([yMin, yMax])
-                    .range([height, 0]);
-                
-                // Add X and Y axes
-                svg.append("g")
-                    .attr("class", "axis")
-                    .attr("transform", `translate(0,${y(0)})`)
-                    .call(d3.axisBottom(x));
-                
-                svg.append("g")
-                    .attr("class", "axis")
-                    .attr("transform", `translate(${x(0)},0)`)
-                    .call(d3.axisLeft(y));
-                
-                // Add grid
-                svg.append("g")
-                    .attr("class", "grid")
-                    .attr("transform", `translate(0,${height})`)
-                    .call(d3.axisBottom(x)
-                        .tickSize(-height)
-                        .tickFormat("")
-                    );
-                
-                svg.append("g")
-                    .attr("class", "grid")
-                    .call(d3.axisLeft(y)
-                        .tickSize(-width)
-                        .tickFormat("")
-                    );
-                
-                // Draw lines for each function
-                functions.forEach(func => {
-                    if (func.visible) {
-                        // Line generator
-                        const line = d3.line()
-                            .x(d => x(d))
-                            .y(d => y(func.slope * d + func.intercept));
-                        
-                        // Draw line
-                        svg.append("path")
-                            .datum([range.min, range.max])
-                            .attr("fill", "none")
-                            .attr("stroke", func.color)
-                            .attr("stroke-width", 2)
-                            .attr("d", line);
-                        
-                        // Add label
-                        const midX = (range.min + range.max) / 2;
-                        const midY = func.slope * midX + func.intercept;
-                        
-                        svg.append("text")
-                            .attr("x", x(midX) + 10)
-                            .attr("y", y(midY) - 10)
-                            .attr("fill", func.color)
-                            .text(`f${func.id}(x) = ${func.slope}x ${func.intercept >= 0 ? `+ ${func.intercept}` : func.intercept}`);
-                    }
-                });
-                
-                // Add axis labels
-                svg.append("text")
-                    .attr("text-anchor", "end")
-                    .attr("x", width)
-                    .attr("y", height + margin.bottom - 5)
-                    .text("X");
-                
-                svg.append("text")
-                    .attr("text-anchor", "end")
-                    .attr("transform", "rotate(-90)")
-                    .attr("y", -margin.left + 15)
-                    .attr("x", -margin.top)
-                    .text("Y");
-                
-            }, [functions, range]);
-
-            return (
-                <div className="container">
-                    <h1>Linear Functions Explorer</h1>
-                    <p>Explore linear functions of the form f(x) = mx + b where m is the slope and b is the y-intercept.</p>
-                    
-                    <div className="control-panel">
-                        <div>
-                            <label>X-Axis Range:</label>
-                            <div>
-                                <input 
-                                    type="number" 
-                                    value={range.min} 
-                                    onChange={(e) => handleRangeChange('min', e.target.value)}
-                                    min="-100" 
-                                    max="0"
-                                />
-                                <span> to </span>
-                                <input 
-                                    type="number" 
-                                    value={range.max} 
-                                    onChange={(e) => handleRangeChange('max', e.target.value)}
-                                    min="0" 
-                                    max="100"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="functions-container">
-                        <h2>Functions</h2>
-                        {functions.map(func => (
-                            <div key={func.id} className="function-card" style={{ backgroundColor: `${func.color}20` }}>
-                                <div className="function-input">
-                                    <input
-                                        type="checkbox"
-                                        checked={func.visible}
-                                        onChange={() => toggleFunctionVisibility(func.id)}
-                                    />
-                                    <label>
-                                        Function {func.id}: f(x) = 
-                                    </label>
-                                    <input
-                                        type="number"
-                                        value={func.slope}
-                                        onChange={(e) => handleFunctionChange(func.id, 'slope', e.target.value)}
-                                        step="0.5"
-                                    />
-                                    <span>x + </span>
-                                    <input
-                                        type="number"
-                                        value={func.intercept}
-                                        onChange={(e) => handleFunctionChange(func.id, 'intercept', e.target.value)}
-                                        step="1"
-                                    />
-                                    <span className="formula">
-                                        y = {func.slope}x {func.intercept >= 0 ? `+ ${func.intercept}` : func.intercept}
-                                    </span>
-                                    <button onClick={() => removeFunction(func.id)}>Remove</button>
-                                </div>
-                            </div>
-                        ))}
-                        <button onClick={addNewFunction}>Add New Function</button>
-                    </div>
-                    
-                    <div className="chart-container" ref={chartRef}></div>
-                    
-                    <div>
-                        <h2>About Linear Functions</h2>
-                        <p>A linear function is a function whose graph is a straight line. The general form is f(x) = mx + b, where:</p>
-                        <ul>
-                            <li><strong>m</strong> is the slope of the line</li>
-                            <li><strong>b</strong> is the y-intercept (where the line crosses the y-axis)</li>
-                        </ul>
-                        <p>Key properties of linear functions:</p>
-                        <ul>
-                            <li>When m > 0, the line slopes upward as x increases (positive slope)</li>
-                            <li>When m < 0, the line slopes downward as x increases (negative slope)</li>
-                            <li>When m = 0, the line is horizontal (constant function)</li>
-                            <li>The larger the absolute value of m, the steeper the slope</li>
-                        </ul>
-                    </div>
-                </div>
-            );
-        };
-
-        // Render the app
-        ReactDOM.render(<LinearFunctionsApp />, document.getElementById('root'));
+                // Redraw the graph
+                draw();
+            }
+        });
+        
+        // Set initial calculated function value
+        const initialResult = calculateLinearFunction(
+            parseFloat(document.getElementById('point1-x').value),
+            parseFloat(document.getElementById('point1-y').value),
+            parseFloat(document.getElementById('point2-x').value),
+            parseFloat(document.getElementById('point2-y').value)
+        );
+        
+        document.getElementById('result').textContent = 
+            `Function: ${formatFunction(initialResult.slope, initialResult.intercept)}`;
+        document.getElementById('result').dataset.slope = initialResult.slope;
+        document.getElementById('result').dataset.intercept = initialResult.intercept;
     </script>
 </body>
 </html>
