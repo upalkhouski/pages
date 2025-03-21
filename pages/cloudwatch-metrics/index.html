@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudWatch Metrics Streaming to S3 with Athena Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/recharts@2.10.4/umd/Recharts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #111827;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-bold mb-6">CloudWatch Metrics Streaming to S3 with Athena Analysis</h1>
+        <div id="demo-root"></div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+        const { Play, Pause, Download, Database, Server, HardDrive, BarChart, RefreshCw } = lucide.icons;
+
+        const CloudWatchMetricsStreamDemo = () => {
+            const [isStreaming, setIsStreaming] = useState(false);
+            const [streamedCount, setStreamedCount] = useState(0);
+            const [storedCount, setStoredCount] = useState(0);
+            const [queryResults, setQueryResults] = useState([]);
+            const [activeQuery, setActiveQuery] = useState(null);
+            const [selectedMetric, setSelectedMetric] = useState('cpu');
+            const [streamSpeed, setStreamSpeed] = useState(1);
+            const [showQueryEditor, setShowQueryEditor] = useState(false);
+            const [queryText, setQueryText] = useState("SELECT timestamp, metric_name, AVG(value) as avg_value\nFROM cloudwatch_metrics\nWHERE metric_name = 'CPUUtilization'\nGROUP BY timestamp, metric_name\nORDER BY timestamp DESC\nLIMIT 100");
+
+            // Sample metrics data for simulation
+            const [metricsData, setMetricsData] = useState([]);
+            const [historicalData, setHistoricalData] = useState([]);
+
+            // Generate random metrics
+            const generateMetric = () => {
+                const now = new Date();
+                const timestamp = now.toISOString();
+                const cpuValue = Math.random() * 50 + 30; // 30-80 range
+                const memoryValue = Math.random() * 40 + 50; // 50-90 range
+                const networkValue = Math.random() * 200 + 100; // 100-300 range
+                
+                return {
+                    timestamp,
+                    cpu: cpuValue.toFixed(2),
+                    memory: memoryValue.toFixed(2),
+                    network: networkValue.toFixed(2)
+                };
+            };
+
+            // Initialize some historical data
+            useEffect(() => {
+                const initialData = [];
+                const now = new Date();
+                
+                for (let i = 20; i >= 0; i--) {
+                    const pastTime = new Date(now.getTime() - (i * 60000)); // i minutes ago
+                    const timestamp = pastTime.toISOString();
+                    initialData.push({
+                        timestamp,
+                        cpu: (Math.random() * 50 + 30).toFixed(2),
+                        memory: (Math.random() * 40 + 50).toFixed(2),
+                        network: (Math.random() * 200 + 100).toFixed(2)
+                    });
+                }
+                
+                setHistoricalData(initialData);
+            }, []);
+
+            // Handle streaming simulation
+            useEffect(() => {
+                let interval;
+                
+                if (isStreaming) {
+                    interval = setInterval(() => {
+                        const newMetric = generateMetric();
+                        setMetricsData(prev => [...prev, newMetric]);
+                        setStreamedCount(prev => prev + 1);
+                        
+                        // Simulate storing to S3 with a slight delay
+                        setTimeout(() => {
+                            setStoredCount(prev => prev + 1);
+                            setHistoricalData(prev => [...prev, newMetric]);
+                        }, 500 * (1/streamSpeed));
+                        
+                    }, 1000 * (1/streamSpeed));
+                }
+                
+                return () => clearInterval(interval);
+            }, [isStreaming, streamSpeed]);
+
+            // Simulated Athena query execution
+            const executeQuery = () => {
+                setActiveQuery('running');
+                
+                // Simulate query execution time
+                setTimeout(() => {
+                    let results = [];
+                    
+                    if (queryText.toLowerCase().includes('cpuutilization') || queryText.toLowerCase().includes('cpu')) {
+                        results = historicalData.slice(-15).map(item => ({
+                            timestamp: item.timestamp,
+                            metric_name: 'CPUUtilization',
+                            avg_value: item.cpu
+                        }));
+                    } else if (queryText.toLowerCase().includes('memoryutilization') || queryText.toLowerCase().includes('memory')) {
+                        results = historicalData.slice(-15).map(item => ({
+                            timestamp: item.timestamp,
+                            metric_name: 'MemoryUtilization',
+                            avg_value: item.memory
+                        }));
+                    } else if (queryText.toLowerCase().includes('networkutilization') || queryText.toLowerCase().includes('network')) {
+                        results = historicalData.slice(-15).map(item => ({
+                            timestamp: item.timestamp,
+                            metric_name: 'NetworkUtilization',
+                            avg_value: item.network
+                        }));
+                    } else {
+                        // Default to CPU if no specific metric mentioned
+                        results = historicalData.slice(-15).map(item => ({
+                            timestamp: item.timestamp,
+                            metric_name: 'CPUUtilization',
+                            avg_value: item.cpu
+                        }));
+                    }
+                    
+                    setQueryResults(results);
+                    setActiveQuery('completed');
+                }, 3000);
+            };
+
+            // Format timestamp for display
+            const formatTimestamp = (timestamp) => {
+                const date = new Date(timestamp);
+                return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+            };
+
+            // Chart data based on selected metric
+            const chartData = historicalData.slice(-20).map((item) => ({
+                name: formatTimestamp(item.timestamp),
+                value: parseFloat(item[selectedMetric])
+            }));
+
+            return (
+                <div className="bg-gray-100 p-4 rounded-lg shadow-md max-w-6xl mx-auto">
+                    <h2 className="text-2xl font-bold text-center mb-4">CloudWatch Metrics Streaming to S3 with Athena Analysis</h2>
+                    
+                    {/* Control Panel */}
+                    <div className="bg-white p-4 rounded-lg shadow mb-4">
+                        <div className="flex flex-wrap items-center justify-between gap-4">
+                            <div className="flex items-center space-x-4">
+                                <button 
+                                    onClick={() => setIsStreaming(!isStreaming)}
+                                    className={`px-4 py-2 rounded-md flex items-center ${isStreaming ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white transition-colors`}
+                                >
+                                    {isStreaming ? <><Pause size={16} className="mr-2" /> Pause Stream</> : <><Play size={16} className="mr-2" /> Start Stream</>}
+                                </button>
+                                
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-sm text-gray-600">Speed:</span>
+                                    <select 
+                                        value={streamSpeed} 
+                                        onChange={(e) => setStreamSpeed(parseFloat(e.target.value))}
+                                        className="border rounded px-2 py-1 text-sm"
+                                    >
+                                        <option value={0.5}>0.5x</option>
+                                        <option value={1}>1x</option>
+                                        <option value={2}>2x</option>
+                                        <option value={5}>5x</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div className="flex space-x-4">
+                                <div className="flex items-center">
+                                    <Server size={16} className="mr-1 text-blue-500" />
+                                    <span className="text-sm">CloudWatch: <span className="font-semibold">{streamedCount}</span> metrics</span>
+                                </div>
+                                <div className="flex items-center">
+                                    <HardDrive size={16} className="mr-1 text-orange-500" />
+                                    <span className="text-sm">S3: <span className="font-semibold">{storedCount}</span> metrics</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Metrics Chart */}
+                    <div className="bg-white p-4 rounded-lg shadow mb-4">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold">Metrics Visualization</h3>
+                            <div className="flex space-x-2">
+                                <button 
+                                    onClick={() => setSelectedMetric('cpu')}
+                                    className={`px-3 py-1 text-xs rounded ${selectedMetric === 'cpu' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                >
+                                    CPU Utilization
+                                </button>
+                                <button 
+                                    onClick={() => setSelectedMetric('memory')}
+                                    className={`px-3 py-1 text-xs rounded ${selectedMetric === 'memory' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                >
+                                    Memory Utilization
+                                </button>
+                                <button 
+                                    onClick={() => setSelectedMetric('network')}
+                                    className={`px-3 py-1 text-xs rounded ${selectedMetric === 'network' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                >
+                                    Network Utilization
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="h-64">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={chartData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Line 
+                                        type="monotone" 
+                                        dataKey="value" 
+                                        stroke={selectedMetric === 'cpu' ? '#2563eb' : selectedMetric === 'memory' ? '#7c3aed' : '#ea580c'} 
+                                        strokeWidth={2}
+                                        name={selectedMetric === 'cpu' ? 'CPU Utilization (%)' : selectedMetric === 'memory' ? 'Memory Utilization (%)' : 'Network (Mbps)'} 
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
+                    
+                    {/* Athena Query Section */}
+                    <div className="bg-white p-4 rounded-lg shadow">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold flex items-center">
+                                <Database size={16} className="mr-2 text-purple-600" />
+                                Athena Analytics
+                            </h3>
+                            <button 
+                                onClick={() => setShowQueryEditor(!showQueryEditor)}
+                                className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300"
+                            >
+                                {showQueryEditor ? 'Hide Query Editor' : 'Show Query Editor'}
+                            </button>
+                        </div>
+                        
+                        {showQueryEditor && (
+                            <div className="mb-4">
+                                <div className="bg-gray-800 p-3 rounded-t-lg">
+                                    <div className="flex justify-between items-center text-gray-400 text-xs mb-2">
+                                        <span>SQL Editor</span>
+                                        <span>athena.amazonaws.com</span>
+                                    </div>
+                                    <textarea 
+                                        value={queryText}
+                                        onChange={(e) => setQueryText(e.target.value)}
+                                        className="w-full bg-gray-900 text-green-400 font-mono text-sm p-3 rounded border border-gray-700 focus:outline-none focus:border-blue-500"
+                                        rows={6}
+                                    />
+                                </div>
+                                
+                                <div className="flex justify-end bg-gray-100 p-2 rounded-b-lg border-t border-gray-300">
+                                    <button 
+                                        onClick={executeQuery}
+                                        disabled={activeQuery === 'running'}
+                                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded flex items-center disabled:bg-purple-400"
+                                    >
+                                        {activeQuery === 'running' ? 
+                                            <><RefreshCw size={16} className="mr-2 animate-spin" /> Running Query...</> : 
+                                            <><BarChart size={16} className="mr-2" /> Run Query</>
+                                        }
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* Query Results */}
+                        {queryResults.length > 0 && (
+                            <div>
+                                <div className="flex justify-between items-center mb-2">
+                                    <h4 className="text-md font-medium">Query Results</h4>
+                                    <span className="text-xs text-gray-500">Showing {queryResults.length} rows</span>
+                                </div>
+                                
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full border-collapse">
+                                        <thead>
+                                            <tr className="bg-gray-50">
+                                                <th className="py-2 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Timestamp</th>
+                                                <th className="py-2 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Metric Name</th>
+                                                <th className="py-2 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Avg Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {queryResults.map((row, idx) => (
+                                                <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                                    <td className="py-2 px-3 text-sm text-gray-900 border-b">{formatTimestamp(row.timestamp)}</td>
+                                                    <td className="py-2 px-3 text-sm text-gray-900 border-b">{row.metric_name}</td>
+                                                    <td className="py-2 px-3 text-sm text-gray-900 border-b">{parseFloat(row.avg_value).toFixed(2)}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div className="flex justify-end mt-2">
+                                    <button className="text-xs flex items-center text-blue-600 hover:text-blue-800">
+                                        <Download size={12} className="mr-1" /> Export results as CSV
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    
+                    {/* Architecture Diagram */}
+                    <div className="mt-4 p-3 bg-white rounded-lg shadow">
+                        <h3 className="text-sm font-medium mb-2 text-center">Architecture Overview</h3>
+                        <div className="flex justify-center items-center h-16 text-xs text-gray-600">
+                            CloudWatch Metrics → Metric Streams → Firehose → S3 → Athena → Business Intelligence
+                        </div>
+                    </div>
+                    
+                    {/* How It Works Section */}
+                    <div className="mt-6 bg-white p-6 rounded-lg shadow">
+                        <h3 className="text-xl font-semibold mb-4">How CloudWatch Metrics Streaming Works</h3>
+                        
+                        <div className="space-y-4">
+                            <div>
+                                <h4 className="text-lg font-medium text-blue-700">1. CloudWatch Metrics Generation</h4>
+                                <p className="mt-1 text-gray-700">AWS services emit metrics that are collected by CloudWatch. These metrics include CPU utilization, memory usage, network traffic, and other performance data.</p>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-lg font-medium text-blue-700">2. Metric Streams</h4>
+                                <p className="mt-1 text-gray-700">CloudWatch Metric Streams provides a near real-time pipeline of metric data. This feature allows continuous streaming of CloudWatch metrics to destinations like Amazon S3 via Firehose.</p>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-lg font-medium text-blue-700">3. Kinesis Data Firehose</h4>
+                                <p className="mt-1 text-gray-700">Firehose is a fully managed service for delivering real-time streaming data. It can buffer, transform, and deliver the metric data to S3, handling batching, compression, and formatting.</p>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-lg font-medium text-blue-700">4. Amazon S3 Storage</h4>
+                                <p className="mt-1 text-gray-700">The metrics are stored in S3 as compressed JSON files organized by date and time. This creates a durable, low-cost metrics archive that can be retained for long-term analysis.</p>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-lg font-medium text-blue-700">5. Amazon Athena Analysis</h4>
+                                <p className="mt-1 text-gray-700">Athena provides serverless SQL query capabilities directly on the data stored in S3. You can analyze metrics without extracting or loading them into a separate database.</p>
+                            </div>
+                            
+                            <div>
+                                <h4 className="text-lg font-medium text-blue-700">6. Business Intelligence</h4>
+                                <p className="mt-1 text-gray-700">Query results can be integrated with BI tools like QuickSight, Tableau, or Power BI for visualization, dashboarding, and further analysis.</p>
+                            </div>
+                        </div>
+                        
+                        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <h4 className="text-lg font-medium text-blue-800 mb-2">Benefits of This Architecture</h4>
+                            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                                <li>Cost-efficient storage of metrics for long-term retention</li>
+                                <li>Ability to analyze metrics across accounts and regions</li>
+                                <li>SQL-based analysis without managing databases</li>
+                                <li>Integration with existing data lakes and analytics workflows</li>
+                                <li>Near real-time processing with minimal latency</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<CloudWatchMetricsStreamDemo />, document.getElementById('demo-root'));
+    </script>
+</body>
+</html>
