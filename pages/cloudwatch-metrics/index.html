@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CloudWatch Metrics Streaming to S3 with Athena Analysis</title>
-    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/recharts@2.10.4/umd/Recharts.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.1.12/umd/Recharts.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9fafb;
+            background-color: #f0f4f8;
         }
         .container {
             max-width: 1200px;
@@ -26,18 +25,78 @@
             text-align: center;
             color: #111827;
         }
+        .metric-button {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+        .active-button {
+            background-color: #1e40af;
+            color: white;
+        }
+        .inactive-button {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 16px;
+            padding: 16px;
+        }
+        .control-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .start-button {
+            background-color: #22c55e;
+            color: white;
+        }
+        .stop-button {
+            background-color: #ef4444;
+            color: white;
+        }
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 500;
+            color: #6b7280;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-3xl font-bold mb-6">CloudWatch Metrics Streaming to S3 with Athena Analysis</h1>
+        <h1 class="text-3xl font-bold my-6">CloudWatch Metrics Streaming to S3 with Athena Analysis</h1>
         <div id="demo-root"></div>
     </div>
 
     <script type="text/babel">
         const { useState, useEffect } = React;
         const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
-        const { Play, Pause, Download, Database, Server, HardDrive, BarChart, RefreshCw } = lucide.icons;
 
         const CloudWatchMetricsStreamDemo = () => {
             const [isStreaming, setIsStreaming] = useState(false);
@@ -164,26 +223,24 @@
             }));
 
             return (
-                <div className="bg-gray-100 p-4 rounded-lg shadow-md max-w-6xl mx-auto">
-                    <h2 className="text-2xl font-bold text-center mb-4">CloudWatch Metrics Streaming to S3 with Athena Analysis</h2>
-                    
+                <div>
                     {/* Control Panel */}
-                    <div className="bg-white p-4 rounded-lg shadow mb-4">
-                        <div className="flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex items-center space-x-4">
+                    <div className="card">
+                        <div style={{display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', alignItems: 'center'}}>
+                            <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
                                 <button 
                                     onClick={() => setIsStreaming(!isStreaming)}
-                                    className={`px-4 py-2 rounded-md flex items-center ${isStreaming ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white transition-colors`}
+                                    className={isStreaming ? "control-button stop-button" : "control-button start-button"}
                                 >
-                                    {isStreaming ? <><Pause size={16} className="mr-2" /> Pause Stream</> : <><Play size={16} className="mr-2" /> Start Stream</>}
+                                    {isStreaming ? "Pause Stream" : "Start Stream"}
                                 </button>
                                 
-                                <div className="flex items-center space-x-2">
-                                    <span className="text-sm text-gray-600">Speed:</span>
+                                <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                    <span style={{fontSize: '14px', color: '#4b5563'}}>Speed:</span>
                                     <select 
                                         value={streamSpeed} 
                                         onChange={(e) => setStreamSpeed(parseFloat(e.target.value))}
-                                        className="border rounded px-2 py-1 text-sm"
+                                        style={{border: '1px solid #d1d5db', borderRadius: '4px', padding: '4px 8px', fontSize: '14px'}}
                                     >
                                         <option value={0.5}>0.5x</option>
                                         <option value={1}>1x</option>
@@ -193,46 +250,46 @@
                                 </div>
                             </div>
                             
-                            <div className="flex space-x-4">
-                                <div className="flex items-center">
-                                    <Server size={16} className="mr-1 text-blue-500" />
-                                    <span className="text-sm">CloudWatch: <span className="font-semibold">{streamedCount}</span> metrics</span>
+                            <div style={{display: 'flex', gap: '16px'}}>
+                                <div>
+                                    <span style={{fontSize: '14px', color: '#4b5563'}}>CloudWatch: </span>
+                                    <strong>{streamedCount}</strong> metrics
                                 </div>
-                                <div className="flex items-center">
-                                    <HardDrive size={16} className="mr-1 text-orange-500" />
-                                    <span className="text-sm">S3: <span className="font-semibold">{storedCount}</span> metrics</span>
+                                <div>
+                                    <span style={{fontSize: '14px', color: '#4b5563'}}>S3: </span>
+                                    <strong>{storedCount}</strong> metrics
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     {/* Metrics Chart */}
-                    <div className="bg-white p-4 rounded-lg shadow mb-4">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold">Metrics Visualization</h3>
-                            <div className="flex space-x-2">
+                    <div className="card">
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+                            <h3 style={{fontSize: '18px', fontWeight: 'bold', margin: 0}}>Metrics Visualization</h3>
+                            <div>
                                 <button 
                                     onClick={() => setSelectedMetric('cpu')}
-                                    className={`px-3 py-1 text-xs rounded ${selectedMetric === 'cpu' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                    className={`metric-button ${selectedMetric === 'cpu' ? 'active-button' : 'inactive-button'}`}
                                 >
                                     CPU Utilization
                                 </button>
                                 <button 
                                     onClick={() => setSelectedMetric('memory')}
-                                    className={`px-3 py-1 text-xs rounded ${selectedMetric === 'memory' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                    className={`metric-button ${selectedMetric === 'memory' ? 'active-button' : 'inactive-button'}`}
                                 >
                                     Memory Utilization
                                 </button>
                                 <button 
                                     onClick={() => setSelectedMetric('network')}
-                                    className={`px-3 py-1 text-xs rounded ${selectedMetric === 'network' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                                    className={`metric-button ${selectedMetric === 'network' ? 'active-button' : 'inactive-button'}`}
                                 >
                                     Network Utilization
                                 </button>
                             </div>
                         </div>
                         
-                        <div className="h-64">
+                        <div className="chart-container">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={chartData}>
                                     <CartesianGrid strokeDasharray="3 3" />
@@ -253,45 +310,67 @@
                     </div>
                     
                     {/* Athena Query Section */}
-                    <div className="bg-white p-4 rounded-lg shadow">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold flex items-center">
-                                <Database size={16} className="mr-2 text-purple-600" />
+                    <div className="card">
+                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px'}}>
+                            <h3 style={{fontSize: '18px', fontWeight: 'bold', margin: 0}}>
                                 Athena Analytics
                             </h3>
                             <button 
                                 onClick={() => setShowQueryEditor(!showQueryEditor)}
-                                className="px-3 py-1 text-sm rounded bg-gray-200 hover:bg-gray-300"
+                                style={{
+                                    padding: '6px 12px',
+                                    backgroundColor: '#e5e7eb',
+                                    color: '#374151',
+                                    borderRadius: '4px',
+                                    fontSize: '14px',
+                                    cursor: 'pointer'
+                                }}
                             >
                                 {showQueryEditor ? 'Hide Query Editor' : 'Show Query Editor'}
                             </button>
                         </div>
                         
                         {showQueryEditor && (
-                            <div className="mb-4">
-                                <div className="bg-gray-800 p-3 rounded-t-lg">
-                                    <div className="flex justify-between items-center text-gray-400 text-xs mb-2">
+                            <div style={{marginBottom: '16px'}}>
+                                <div style={{backgroundColor: '#1f2937', padding: '12px', borderTopLeftRadius: '6px', borderTopRightRadius: '6px'}}>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#9ca3af', fontSize: '12px', marginBottom: '8px'}}>
                                         <span>SQL Editor</span>
                                         <span>athena.amazonaws.com</span>
                                     </div>
                                     <textarea 
                                         value={queryText}
                                         onChange={(e) => setQueryText(e.target.value)}
-                                        className="w-full bg-gray-900 text-green-400 font-mono text-sm p-3 rounded border border-gray-700 focus:outline-none focus:border-blue-500"
+                                        style={{
+                                            width: '100%',
+                                            backgroundColor: '#111827',
+                                            color: '#4ade80',
+                                            fontFamily: 'monospace',
+                                            fontSize: '14px',
+                                            padding: '12px',
+                                            borderRadius: '4px',
+                                            border: '1px solid #374151',
+                                            outline: 'none',
+                                            resize: 'vertical'
+                                        }}
                                         rows={6}
                                     />
                                 </div>
                                 
-                                <div className="flex justify-end bg-gray-100 p-2 rounded-b-lg border-t border-gray-300">
+                                <div style={{display: 'flex', justifyContent: 'flex-end', backgroundColor: '#f3f4f6', padding: '8px', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px', borderTop: '1px solid #d1d5db'}}>
                                     <button 
                                         onClick={executeQuery}
                                         disabled={activeQuery === 'running'}
-                                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded flex items-center disabled:bg-purple-400"
+                                        style={{
+                                            padding: '8px 16px',
+                                            backgroundColor: activeQuery === 'running' ? '#9333ea' : '#7c3aed',
+                                            color: 'white',
+                                            borderRadius: '4px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            cursor: activeQuery === 'running' ? 'not-allowed' : 'pointer'
+                                        }}
                                     >
-                                        {activeQuery === 'running' ? 
-                                            <><RefreshCw size={16} className="mr-2 animate-spin" /> Running Query...</> : 
-                                            <><BarChart size={16} className="mr-2" /> Run Query</>
-                                        }
+                                        {activeQuery === 'running' ? 'Running Query...' : 'Run Query'}
                                     </button>
                                 </div>
                             </div>
@@ -300,35 +379,35 @@
                         {/* Query Results */}
                         {queryResults.length > 0 && (
                             <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <h4 className="text-md font-medium">Query Results</h4>
-                                    <span className="text-xs text-gray-500">Showing {queryResults.length} rows</span>
+                                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
+                                    <h4 style={{fontSize: '16px', fontWeight: '500', margin: 0}}>Query Results</h4>
+                                    <span style={{fontSize: '12px', color: '#6b7280'}}>Showing {queryResults.length} rows</span>
                                 </div>
                                 
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full border-collapse">
+                                <div style={{overflowX: 'auto'}}>
+                                    <table>
                                         <thead>
-                                            <tr className="bg-gray-50">
-                                                <th className="py-2 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Timestamp</th>
-                                                <th className="py-2 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Metric Name</th>
-                                                <th className="py-2 px-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b">Avg Value</th>
+                                            <tr>
+                                                <th>Timestamp</th>
+                                                <th>Metric Name</th>
+                                                <th>Avg Value</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {queryResults.map((row, idx) => (
-                                                <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                                    <td className="py-2 px-3 text-sm text-gray-900 border-b">{formatTimestamp(row.timestamp)}</td>
-                                                    <td className="py-2 px-3 text-sm text-gray-900 border-b">{row.metric_name}</td>
-                                                    <td className="py-2 px-3 text-sm text-gray-900 border-b">{parseFloat(row.avg_value).toFixed(2)}</td>
+                                                <tr key={idx}>
+                                                    <td>{formatTimestamp(row.timestamp)}</td>
+                                                    <td>{row.metric_name}</td>
+                                                    <td>{parseFloat(row.avg_value).toFixed(2)}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
                                 </div>
                                 
-                                <div className="flex justify-end mt-2">
-                                    <button className="text-xs flex items-center text-blue-600 hover:text-blue-800">
-                                        <Download size={12} className="mr-1" /> Export results as CSV
+                                <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '8px'}}>
+                                    <button style={{fontSize: '12px', color: '#2563eb', display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                                        Export results as CSV
                                     </button>
                                 </div>
                             </div>
@@ -336,52 +415,52 @@
                     </div>
                     
                     {/* Architecture Diagram */}
-                    <div className="mt-4 p-3 bg-white rounded-lg shadow">
-                        <h3 className="text-sm font-medium mb-2 text-center">Architecture Overview</h3>
-                        <div className="flex justify-center items-center h-16 text-xs text-gray-600">
+                    <div className="card" style={{textAlign: 'center'}}>
+                        <h3 style={{fontSize: '14px', fontWeight: '500', marginBottom: '8px'}}>Architecture Overview</h3>
+                        <div style={{height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: '#4b5563'}}>
                             CloudWatch Metrics → Metric Streams → Firehose → S3 → Athena → Business Intelligence
                         </div>
                     </div>
                     
                     {/* How It Works Section */}
-                    <div className="mt-6 bg-white p-6 rounded-lg shadow">
-                        <h3 className="text-xl font-semibold mb-4">How CloudWatch Metrics Streaming Works</h3>
+                    <div className="card" style={{marginTop: '24px'}}>
+                        <h3 style={{fontSize: '20px', fontWeight: 'bold', marginBottom: '16px'}}>How CloudWatch Metrics Streaming Works</h3>
                         
-                        <div className="space-y-4">
+                        <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
                             <div>
-                                <h4 className="text-lg font-medium text-blue-700">1. CloudWatch Metrics Generation</h4>
-                                <p className="mt-1 text-gray-700">AWS services emit metrics that are collected by CloudWatch. These metrics include CPU utilization, memory usage, network traffic, and other performance data.</p>
+                                <h4 style={{fontSize: '18px', fontWeight: '500', color: '#1d4ed8', marginBottom: '4px'}}>1. CloudWatch Metrics Generation</h4>
+                                <p style={{color: '#374151', margin: 0}}>AWS services emit metrics that are collected by CloudWatch. These metrics include CPU utilization, memory usage, network traffic, and other performance data.</p>
                             </div>
                             
                             <div>
-                                <h4 className="text-lg font-medium text-blue-700">2. Metric Streams</h4>
-                                <p className="mt-1 text-gray-700">CloudWatch Metric Streams provides a near real-time pipeline of metric data. This feature allows continuous streaming of CloudWatch metrics to destinations like Amazon S3 via Firehose.</p>
+                                <h4 style={{fontSize: '18px', fontWeight: '500', color: '#1d4ed8', marginBottom: '4px'}}>2. Metric Streams</h4>
+                                <p style={{color: '#374151', margin: 0}}>CloudWatch Metric Streams provides a near real-time pipeline of metric data. This feature allows continuous streaming of CloudWatch metrics to destinations like Amazon S3 via Firehose.</p>
                             </div>
                             
                             <div>
-                                <h4 className="text-lg font-medium text-blue-700">3. Kinesis Data Firehose</h4>
-                                <p className="mt-1 text-gray-700">Firehose is a fully managed service for delivering real-time streaming data. It can buffer, transform, and deliver the metric data to S3, handling batching, compression, and formatting.</p>
+                                <h4 style={{fontSize: '18px', fontWeight: '500', color: '#1d4ed8', marginBottom: '4px'}}>3. Kinesis Data Firehose</h4>
+                                <p style={{color: '#374151', margin: 0}}>Firehose is a fully managed service for delivering real-time streaming data. It can buffer, transform, and deliver the metric data to S3, handling batching, compression, and formatting.</p>
                             </div>
                             
                             <div>
-                                <h4 className="text-lg font-medium text-blue-700">4. Amazon S3 Storage</h4>
-                                <p className="mt-1 text-gray-700">The metrics are stored in S3 as compressed JSON files organized by date and time. This creates a durable, low-cost metrics archive that can be retained for long-term analysis.</p>
+                                <h4 style={{fontSize: '18px', fontWeight: '500', color: '#1d4ed8', marginBottom: '4px'}}>4. Amazon S3 Storage</h4>
+                                <p style={{color: '#374151', margin: 0}}>The metrics are stored in S3 as compressed JSON files organized by date and time. This creates a durable, low-cost metrics archive that can be retained for long-term analysis.</p>
                             </div>
                             
                             <div>
-                                <h4 className="text-lg font-medium text-blue-700">5. Amazon Athena Analysis</h4>
-                                <p className="mt-1 text-gray-700">Athena provides serverless SQL query capabilities directly on the data stored in S3. You can analyze metrics without extracting or loading them into a separate database.</p>
+                                <h4 style={{fontSize: '18px', fontWeight: '500', color: '#1d4ed8', marginBottom: '4px'}}>5. Amazon Athena Analysis</h4>
+                                <p style={{color: '#374151', margin: 0}}>Athena provides serverless SQL query capabilities directly on the data stored in S3. You can analyze metrics without extracting or loading them into a separate database.</p>
                             </div>
                             
                             <div>
-                                <h4 className="text-lg font-medium text-blue-700">6. Business Intelligence</h4>
-                                <p className="mt-1 text-gray-700">Query results can be integrated with BI tools like QuickSight, Tableau, or Power BI for visualization, dashboarding, and further analysis.</p>
+                                <h4 style={{fontSize: '18px', fontWeight: '500', color: '#1d4ed8', marginBottom: '4px'}}>6. Business Intelligence</h4>
+                                <p style={{color: '#374151', margin: 0}}>Query results can be integrated with BI tools like QuickSight, Tableau, or Power BI for visualization, dashboarding, and further analysis.</p>
                             </div>
                         </div>
                         
-                        <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                            <h4 className="text-lg font-medium text-blue-800 mb-2">Benefits of This Architecture</h4>
-                            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                        <div style={{marginTop: '24px', padding: '16px', backgroundColor: '#eff6ff', borderRadius: '6px', border: '1px solid #bfdbfe'}}>
+                            <h4 style={{fontSize: '18px', fontWeight: '500', color: '#1e40af', marginBottom: '8px'}}>Benefits of This Architecture</h4>
+                            <ul style={{paddingLeft: '20px', margin: 0, color: '#374151'}}>
                                 <li>Cost-efficient storage of metrics for long-term retention</li>
                                 <li>Ability to analyze metrics across accounts and regions</li>
                                 <li>SQL-based analysis without managing databases</li>
